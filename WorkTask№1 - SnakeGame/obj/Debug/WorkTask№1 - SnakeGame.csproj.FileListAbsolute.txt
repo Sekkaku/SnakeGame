@@ -1,0 +1,7 @@
+C:\Users\garmanova_evgenia\source\repos\WorkTasks\WorkTask№1 - SnakeGame\bin\Debug\WorkTask№1 - SnakeGame.exe.config
+C:\Users\garmanova_evgenia\source\repos\WorkTasks\WorkTask№1 - SnakeGame\bin\Debug\WorkTask№1 - SnakeGame.exe
+C:\Users\garmanova_evgenia\source\repos\WorkTasks\WorkTask№1 - SnakeGame\bin\Debug\WorkTask№1 - SnakeGame.pdb
+C:\Users\garmanova_evgenia\source\repos\WorkTasks\WorkTask№1 - SnakeGame\obj\Debug\WorkTask№1 - SnakeGame.csproj.AssemblyReference.cache
+C:\Users\garmanova_evgenia\source\repos\WorkTasks\WorkTask№1 - SnakeGame\obj\Debug\WorkTask№1 - SnakeGame.csproj.CoreCompileInputs.cache
+C:\Users\garmanova_evgenia\source\repos\WorkTasks\WorkTask№1 - SnakeGame\obj\Debug\WorkTask№1 - SnakeGame.exe
+C:\Users\garmanova_evgenia\source\repos\WorkTasks\WorkTask№1 - SnakeGame\obj\Debug\WorkTask№1 - SnakeGame.pdb
