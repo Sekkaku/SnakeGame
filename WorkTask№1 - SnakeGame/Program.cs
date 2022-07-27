@@ -91,6 +91,7 @@ namespace WorkTask_1___SnakeGame
                                         case "@":
                                             gameField[headY - 1, headX] = snakeHead;
                                             gameField[headY, headX] = "#";
+                                            AppleRandomPut(gameField);
                                             break;
                                     }
                                 }
@@ -131,6 +132,7 @@ namespace WorkTask_1___SnakeGame
                                         case "@":
                                             gameField[headY, headX - 1] = snakeHead;
                                             gameField[headY, headX] = "#";
+                                            AppleRandomPut(gameField);
                                             break;
                                     }
                                 }
@@ -171,6 +173,7 @@ namespace WorkTask_1___SnakeGame
                                         case "@":
                                             gameField[headY + 1, headX] = snakeHead;
                                             gameField[headY, headX] = "#";
+                                            AppleRandomPut(gameField);
                                             break;
                                     }
                                 }
@@ -211,6 +214,7 @@ namespace WorkTask_1___SnakeGame
                                         case "@":
                                             gameField[headY, headX + 1] = snakeHead;
                                             gameField[headY, headX] = "#";
+                                            AppleRandomPut(gameField);
                                             break;
                                     }
                                 }
