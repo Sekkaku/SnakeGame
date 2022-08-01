@@ -4,286 +4,199 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkTask_1___SnakeGame
+namespace SnakeGame
 {
-    class Program
+    class SnakeGame
     {
-        // Яблочко
-        static string[,] AppleRandomPut(string[,] array)
-        {
-            for (int appley = new Random().Next(1, 18); ;)
-            {
-                for (int applex = new Random().Next(1, 18); ;)
-                {
-                    switch (array[appley, applex])
-                    {
-                        case "#":
-                        appley = new Random().Next(1, 18);
-                        applex = new Random().Next(1, 18);
-                        continue;
+        int height = 20;
+        int width = 20;
 
-                        default:
-                        array[appley, applex] = "@";
-                        return array;
-                    }
-                }
-            }
+        int[] snakeX = new int[20];
+        int[] snakeY = new int[20];
+
+        int appleX;
+        int appleY;
+
+        int snakeLength = 2;
+
+        Random random = new Random();
+        public SnakeGame()
+        {
+            snakeX[0] = random.Next(1, width - 1);
+            snakeY[0] = random.Next(1, height - 1);
+            Console.CursorVisible = false;
+            appleX = random.Next(1, width - 1);
+            appleY = random.Next(1, height - 1);
         }
 
-        static string PlayerRandomAppearance(string[,] array)
+        public void FieldDrawing()
         {
-            for (int playerY = new Random().Next(1, 18); ;)
-            {
-                for (int playerX = new Random().Next(1, 18); ;)
-                {
-                    array[playerY, playerX] = "#";
-                    string snakeHead = array[playerY, playerX];
-                    return snakeHead;
-                }
-            }
-        }
-
-        static void FieldDrawing(string[,] gameField)
-        {
-            for (int y = 0; y < 19; y++)
-            {
-                for (int x = 0; x < 19; x++)
-                {
-                    Console.Write(gameField[y, x]);
-                }
-                Console.WriteLine();
-            }
-        }
-
-        static void PlayerSnakeWalking(string[,] gameField, string snakeHead)
-        {
-            int height = 19;
-            int width = 19;
-            switch (Console.ReadKey().Key)
-            {
-                case ConsoleKey.UpArrow:
-                case ConsoleKey.W:
-                    {
-                        for (int headX = 0; headX < height; headX++)
-                        {
-                            for (int headY = 0; headY < width; headY++)
-                            {
-                                if (gameField[headY, headX] == snakeHead)
-                                {
-                                    switch (gameField[headY - 1, headX])
-                                    {
-                                        case " ":
-                                            gameField[headY - 1, headX] = snakeHead;
-                                            gameField[headY, headX] = " ";
-                                            break;
-
-                                        case "#":
-                                            Console.WriteLine("Вы проиграли! Нажмите Enter, чтобы выйти:");
-                                            Console.ReadLine();
-                                            Environment.Exit(0);
-                                            break;
-
-                                        case "-":
-                                            gameField[18, headX] = snakeHead;
-                                            gameField[headY, headX] = " ";
-                                            break;
-
-                                        case "@":
-                                            gameField[headY - 1, headX] = snakeHead;
-                                            gameField[headY, headX] = "#";
-                                            AppleRandomPut(gameField);
-                                            break;
-                                    }
-                                }
-                            }
-                            continue;
-                        }
-                        Console.Clear();
-                        break;
-                    }
-                case ConsoleKey.LeftArrow:
-                case ConsoleKey.A:
-                    {
-                        Console.Clear();
-                        for (int headX = 0; headX < height; headX++)
-                        {
-                            for (int headY = width; headY > 0; headY--)
-                            {
-                                if (gameField[headY, headX] == snakeHead)
-                                {
-                                    switch (gameField[headY, headX - 1])
-                                    {
-                                        case " ":
-                                            gameField[headY, headX - 1] = snakeHead;
-                                            gameField[headY, headX] = " ";
-                                            break;
-
-                                        case "#":
-                                            Console.WriteLine("Вы проиграли! Нажмите Enter, чтобы выйти:");
-                                            Console.ReadLine();
-                                            Environment.Exit(0);
-                                            break;
-
-                                        case "|":
-                                            gameField[headY, 18] = snakeHead;
-                                            gameField[headY, headX] = " ";
-                                            break;
-
-                                        case "@":
-                                            gameField[headY, headX - 1] = snakeHead;
-                                            gameField[headY, headX] = "#";
-                                            AppleRandomPut(gameField);
-                                            break;
-                                    }
-                                }
-                            }
-                            continue;
-                        }
-                        Console.Clear();
-                        break;
-                    }
-                case ConsoleKey.DownArrow:
-                case ConsoleKey.S:
-                    {
-                        Console.Clear();
-                        for (int headX = 0; headX < height; headX++)
-                        {
-                            for (int headY = width; headY > 0; headY--)
-                            {
-                                if (gameField[headY, headX] == snakeHead)
-                                {
-                                    switch (gameField[headY + 1, headX])
-                                    {
-                                        case " ":
-                                            gameField[headY + 1, headX] = snakeHead;
-                                            gameField[headY, headX] = " ";
-                                            break;
-
-                                        case "#":
-                                            Console.WriteLine("Вы проиграли! Нажмите Enter, чтобы выйти:");
-                                            Console.ReadLine();
-                                            Environment.Exit(0);
-                                            break;
-
-                                        case "-":
-                                            gameField[1, headX] = snakeHead;
-                                            gameField[headY, headX] = " ";
-                                            break;
-
-                                        case "@":
-                                            gameField[headY + 1, headX] = snakeHead;
-                                            gameField[headY, headX] = "#";
-                                            AppleRandomPut(gameField);
-                                            break;
-                                    }
-                                }
-                            }
-                            continue;
-                        }
-                        Console.Clear();
-                        break;
-                    }
-                case ConsoleKey.RightArrow:
-                case ConsoleKey.D:
-                    {
-                        Console.Clear();
-                        for (int headX = height; headX >= 0; headX--)
-                        {
-                            for (int headY = 0; headY < width; headY++)
-                            {
-                                if (gameField[headY, headX] == snakeHead)
-                                {
-                                    switch (gameField[headY, headX + 1])
-                                    {
-                                        case " ":
-                                            gameField[headY, headX + 1] = snakeHead;
-                                            gameField[headY, headX] = " ";
-                                            break;
-
-                                        case "#":
-                                            Console.WriteLine("Вы проиграли! Нажмите Enter, чтобы выйти:");
-                                            Console.ReadLine();
-                                            Environment.Exit(0);
-                                            break;
-
-                                        case "|":
-                                            gameField[headY, 1] = snakeHead;
-                                            gameField[headY, headX] = " ";
-                                            break;
-
-                                        case "@":
-                                            gameField[headY, headX + 1] = snakeHead;
-                                            gameField[headY, headX] = "#";
-                                            AppleRandomPut(gameField);
-                                            break;
-                                    }
-                                }
-                            }
-                            continue;
-                        }
-                        Console.Clear();
-                        break;
-                    }
-                default:
-                    break;
-            }
-        }
-
-        static void Main(string[] args)
-        {
-
-            // Создание массива
-
-            int height = 20;
-            int width = 20;
-
-            string[,] gameField = new string[height, width];
-
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
                     if (x == 0 || x == 19)
                     {
-                        gameField[y, x] = "|";
+                        Console.SetCursorPosition(x, y);
+                        Console.Write("|");
                     }
 
-                    else if (y > 0 & y < 19)
+                    else if (y == 0 || y == 19)
                     {
-                        gameField[y, x] = " ";
-                    }
-
-                    else 
-                    {
-                        gameField[y, x] = "-";
+                        Console.SetCursorPosition(x, y);
+                        Console.Write("-");
                     }
                 }
             }
+        }
 
-            string snakeHead;
+        public void WritePointSnake(int x, int y)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.Write("#");
+        }
 
-            snakeHead = PlayerRandomAppearance(gameField);
+        public void WritePointApple(int x, int y)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.Write("@");
+        }
 
-            AppleRandomPut(gameField);
+        public void Drawing() 
+        {
+            for (int i = 0; i < snakeLength; i++)
+            {
+                WritePointSnake(snakeX[i], snakeY[i]);
+                WritePointApple(appleX, appleY);
+            }
+        }
 
+        public void WallLogicX()
+        {
+            if (snakeX[0] == 0)
+            {
+                snakeX[0] = 19;
+                snakeX[0]--;
+                for (int i = snakeLength; i > 1; i--)
+                {
+                    snakeX[i - 1] = snakeX[i - 2];
+                    snakeY[i - 1] = snakeY[i - 2];
+                }
+                Drawing();
+            }
+            if (snakeX[0] == 19)
+            {
+                snakeX[0] = 0;
+                snakeX[0]++;
+                for (int i = snakeLength; i > 1; i--)
+                {
+                    snakeX[i - 1] = snakeX[i - 2];
+                    snakeY[i - 1] = snakeY[i - 2];
+                }
+                Drawing();
+            }
+        }
+
+        public void WallLogicY()
+        {
+            if (snakeY[0] == 0)
+            {
+                snakeY[0] = 19;
+                snakeY[0]--;
+                for (int i = snakeLength; i > 1; i--)
+                {
+                    snakeX[i - 1] = snakeX[i - 2];
+                    snakeY[i - 1] = snakeY[i - 2];
+                }
+                Drawing();
+            }
+            if (snakeY[0] == 19)
+            {
+                snakeY[0] = 0;
+                snakeY[0]++;
+                for (int i = snakeLength; i > 1; i--)
+                {
+                    snakeX[i - 1] = snakeX[i - 2];
+                    snakeY[i - 1] = snakeY[i - 2];
+                }
+                Drawing();
+            }
+        }
+
+        public void Death()
+        {
+            for (int i = snakeLength; i > 1; i--)
+                {
+                if (snakeX[0] == snakeX[i] && snakeY[0] == snakeY[i])
+                {
+                    Console.WriteLine("Вы проиграли! Нажмите Enter, чтобы выйти:");
+                    Console.ReadLine();
+                    Environment.Exit(0);
+                }
+            }
+        }
+
+        public void WalkingLogic()
+        {
+            switch (Console.ReadKey().Key)
+            {
+                case ConsoleKey.UpArrow:
+                case ConsoleKey.W:
+                    snakeY[0]--;
+                    Console.Clear();
+                    WallLogicY();
+                    Death();
+                    break;
+                case ConsoleKey.DownArrow:
+                case ConsoleKey.S:
+                    snakeY[0]++;
+                    Console.Clear();
+                    WallLogicY();
+                    Death();
+                    break;
+                case ConsoleKey.RightArrow:
+                case ConsoleKey.D:
+                    snakeX[0]++;
+                    Console.Clear();
+                    WallLogicX();
+                    Death();
+                    break;
+                case ConsoleKey.LeftArrow:
+                case ConsoleKey.A:
+                    snakeX[0]--;
+                    Console.Clear();
+                    WallLogicX();
+                    Death();
+                    break;
+            }
+            if (snakeY[0] == appleY)
+            {
+                if (snakeX[0] == appleX)
+                {
+                    snakeLength++;
+                    appleX = random.Next(2, (height - 1));
+                    appleY = random.Next(2, (width - 1));
+                    Drawing();
+                }
+            }
+            for (int i = snakeLength; i > 1; i--)
+            {
+                snakeX[i - 1] = snakeX[i - 2];
+                snakeY[i - 1] = snakeY[i - 2];
+            }
+            Drawing();
+        }
+
+        static void Main(string[] args)
+        {
+            SnakeGame Snake = new SnakeGame();
+            Snake.FieldDrawing();
             while (true)
             {
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        Console.Write(gameField[y, x]);
-                    }
-                    Console.WriteLine();
-                }
+                Snake.WalkingLogic();
 
-                PlayerSnakeWalking(gameField, snakeHead);
-
+                Snake.FieldDrawing();
             }
-
-            
-
-            // Отображение массива
         }
     }
 }
