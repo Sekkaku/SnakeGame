@@ -169,15 +169,20 @@ namespace SnakeGame
                     Death();
                     break;
             }
-            if (snakeY[0] == appleY)
+            if (snakeY[0] == appleY && snakeX[0] == appleX)
             {
-                if (snakeX[0] == appleX)
-                {
-                    snakeLength++;
+                snakeLength++;
                     appleX = random.Next(2, (height - 1));
                     appleY = random.Next(2, (width - 1));
-                    Drawing();
-                }
+                    for (int i = snakeLength; i >= 0; i--)
+                    {
+                        if (appleX == snakeX[i] && appleY == snakeY[i])
+                        {
+                            appleX = random.Next(2, (height - 1));
+                            appleY = random.Next(2, (width - 1));
+                        }
+                    }
+                Drawing();
             }
             for (int i = snakeLength; i > 1; i--)
             {
