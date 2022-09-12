@@ -8,8 +8,8 @@ namespace SnakeGame
 {
     class SnakeGame
     {
-        int height = 20;
-        int width = 20;
+        int height;
+        int width;
 
         int[] snakeX = new int[20];
         int[] snakeY = new int[20];
@@ -20,7 +20,31 @@ namespace SnakeGame
         int snakeLength = 2;
 
         Random random = new Random();
-        public SnakeGame()
+
+        public void WidthChecker()
+        {
+            try
+            {
+                width = int.Parse(Console.ReadLine());
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Неверное значение длины - ", Console.ReadLine());
+            }
+        }
+
+        public void HeightChecker()
+        {
+            try
+            {
+                height = int.Parse(Console.ReadLine());
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Неверное значение высоты - ", Console.ReadLine());
+            }
+        }
+        public void StartGame()
         {
             snakeX[0] = random.Next(1, width - 1);
             snakeY[0] = random.Next(1, height - 1);
@@ -35,13 +59,13 @@ namespace SnakeGame
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (x == 0 || x == 19)
+                    if (x == 0 || x == width - 1)
                     {
                         Console.SetCursorPosition(x, y);
                         Console.Write("|");
                     }
 
-                    else if (y == 0 || y == 19)
+                    else if (y == 0 || y == height - 1)
                     {
                         Console.SetCursorPosition(x, y);
                         Console.Write("-");
@@ -75,7 +99,7 @@ namespace SnakeGame
         {
             if (snakeX[0] == 0)
             {
-                snakeX[0] = 19;
+                snakeX[0] = width - 1;
                 snakeX[0]--;
                 for (int i = snakeLength; i > 1; i--)
                 {
@@ -84,7 +108,7 @@ namespace SnakeGame
                 }
                 Drawing();
             }
-            if (snakeX[0] == 19)
+            if (snakeX[0] == width - 1)
             {
                 snakeX[0] = 0;
                 snakeX[0]++;
@@ -101,7 +125,7 @@ namespace SnakeGame
         {
             if (snakeY[0] == 0)
             {
-                snakeY[0] = 19;
+                snakeY[0] = height - 1;
                 snakeY[0]--;
                 for (int i = snakeLength; i > 1; i--)
                 {
@@ -110,7 +134,7 @@ namespace SnakeGame
                 }
                 Drawing();
             }
-            if (snakeY[0] == 19)
+            if (snakeY[0] == height - 1)
             {
                 snakeY[0] = 0;
                 snakeY[0]++;
@@ -125,7 +149,7 @@ namespace SnakeGame
 
         public void Death()
         {
-            for (int i = snakeLength; i > 1; i--)
+            for (int i = snakeLength; i > 0; i--)
                 {
                 if (snakeX[0] == snakeX[i] && snakeY[0] == snakeY[i])
                 {
@@ -146,28 +170,51 @@ namespace SnakeGame
                     Console.Clear();
                     WallLogicY();
                     Death();
+                    FieldDrawing();
+                    Drawing();
+                    System.Threading.Thread.Sleep(1000);
+                    if (Console.ReadKey().Key == ConsoleKey.W || Console.ReadKey().Key == ConsoleKey.UpArrow)
+                    {
+                        return;
+                    }
                     break;
                 case ConsoleKey.DownArrow:
                 case ConsoleKey.S:
-                    snakeY[0]++;
-                    Console.Clear();
-                    WallLogicY();
-                    Death();
+                    while (Console.ReadKey().Key == ConsoleKey.S || Console.ReadKey().Key == ConsoleKey.DownArrow)
+                    {
+                        snakeY[0]++;
+                        Console.Clear();
+                        WallLogicY();
+                        Death();
+                        FieldDrawing();
+                        Drawing();
+                        System.Threading.Thread.Sleep(1000);
+                    }
                     break;
                 case ConsoleKey.RightArrow:
                 case ConsoleKey.D:
-                    snakeX[0]++;
-                    Console.Clear();
-                    WallLogicX();
-                    Death();
-                    break;
+                    while (true)
+                    {
+                        snakeX[0]++;
+                        Console.Clear();
+                        WallLogicX();
+                        Death();
+                        FieldDrawing();
+                        Drawing();
+                        System.Threading.Thread.Sleep(1000);
+                    }
                 case ConsoleKey.LeftArrow:
                 case ConsoleKey.A:
-                    snakeX[0]--;
-                    Console.Clear();
-                    WallLogicX();
-                    Death();
-                    break;
+                    while (true)
+                    {
+                        snakeX[0]--;
+                        Console.Clear();
+                        WallLogicX();
+                        Death();
+                        FieldDrawing();
+                        Drawing();
+                        System.Threading.Thread.Sleep(1000);
+                    }
             }
             if (snakeY[0] == appleY && snakeX[0] == appleX)
             {
@@ -194,14 +241,21 @@ namespace SnakeGame
 
         static void Main(string[] args)
         {
-            SnakeGame Snake = new SnakeGame();
-            Snake.FieldDrawing();
-            while (true)
-            {
-                Snake.WalkingLogic();
+            var Snake = new SnakeGame();
 
-                Snake.FieldDrawing();
-            }
+            Console.Write("Введите длину поля: ");
+            Snake.WidthChecker();
+
+            Console.Write("Введите высоту поля: ");
+            Snake.HeightChecker();
+
+            Console.Clear();
+
+            Snake.StartGame();
+
+            Snake.FieldDrawing();
+
+            Snake.WalkingLogic();
         }
     }
 }
