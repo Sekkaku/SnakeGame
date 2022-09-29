@@ -107,6 +107,7 @@ namespace SnakeGame
             {
                 var vector = UserInput();
 
+                //Зачем присваивать координаты змейки вектору? получается в методе UserInput вектор заполнился,а потом ты стерла эти данные и записала другие
                 vector.X = snakeX;
                 vector.Y = snakeY;
 
@@ -115,6 +116,8 @@ namespace SnakeGame
                 WallLogicY(height, snakeX, snakeY, snakeLength);
                 WallLogicX(width, snakeX, snakeY, snakeLength);
                 Death(snakeX, snakeY, snakeLength);
+                
+                //здесь не хватает метода отрисовки
                 System.Threading.Thread.Sleep(1000);
             }
         }
@@ -140,6 +143,7 @@ namespace SnakeGame
             return new MyVector2();
         }
 
+        //Какой смысл в этом методе? Это лишнее действие программы
         private void Walk(int snakeX, int snakeY)
         {
             WritePointSnake(snakeX, snakeY);
@@ -152,6 +156,7 @@ namespace SnakeGame
                 snakeLength++;
                 appleX = random.Next(2, (height - 1));
                 appleY = random.Next(2, (width - 1));
+                // можно оставить этот цикл и убрать две строки выше. Типа сначала рандомишь, а потом делаешь проверку
                 for (int i = snakeLength; i >= 0; i--)
                 {
                     if (appleX == snakeX && appleY == snakeY)
@@ -162,6 +167,7 @@ namespace SnakeGame
                 }
                 SnakeGrowth(snakeLength, snake, snakeX, snakeY);
 
+                // Метод отрисовки надо было оставить в GameLoop. Типа отрисовка после всех вычеслений в кадре.
                 Drawing(snakeX, snakeY, appleX, appleY, snakeLength);
             }
         }
@@ -196,12 +202,14 @@ namespace SnakeGame
             }
         }
 
+        //метод отрисовки стоило сделать общим для всей змейки в целом 
         private void WritePointSnake(int x, int y)
         {
             Console.SetCursorPosition(x, y);
             Console.Write("#");
         }
-
+        
+        //Также можно было объединить метод выше и ниже, а аргументом задавать то, что нужно отрисовать
         private void WritePointApple(int x, int y)
         {
             Console.SetCursorPosition(x, y);
@@ -213,6 +221,7 @@ namespace SnakeGame
             for (int i = 0; i < snakeLength; i++)
             {
                 WritePointSnake(snakeX, snakeY);
+                //Получается ты отрисуешь кол-во яблок, равное кол-ву длины змейки, следовало вынести за границы цикла
                 WritePointApple(appleX, appleY);
             }
         }
