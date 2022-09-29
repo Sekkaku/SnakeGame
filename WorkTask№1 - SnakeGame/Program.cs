@@ -88,6 +88,7 @@ namespace SnakeGame
         }
         private void SetStartParameters(Random random, int width, int height, int snakeX, int snakeY, int appleX, int appleY, int[,] snake)
         {
+             // стоило сделать эти переменные локальными через оператор var, это более правильная работа с памятью
             snakeX = random.Next(1, width - 1);
             snakeY = random.Next(1, height - 1);
 
@@ -96,7 +97,7 @@ namespace SnakeGame
 
             Console.CursorVisible = false;
 
-            appleX = random.Next(1, width - 1);
+            appleX = random.Next(1, width - 1); 
             appleY = random.Next(1, height - 1);
         }
 
