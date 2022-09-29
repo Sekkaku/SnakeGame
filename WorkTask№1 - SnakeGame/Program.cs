@@ -6,54 +6,175 @@ using System.Threading.Tasks;
 
 namespace SnakeGame
 {
+    public struct MyVector2
+    {
+        public int X;
+        public int Y;
+
+        public MyVector2(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
+    public class Start
+    {
+        static void Main(string[] args)
+        {
+            var Snake = new SnakeGame();
+            Snake.StartGame();
+        }
+    }
+
     class SnakeGame
     {
-        int height;
-        int width;
-
-        int[] snakeX = new int[20];
-        int[] snakeY = new int[20];
-
-        int appleX;
-        int appleY;
-
-        int snakeLength = 2;
-
-        Random random = new Random();
-
-        public void WidthChecker()
+        public void StartGame()
         {
+            int[,] snake = new int[1, 2];
+
+            int appleX = 0;
+            int appleY = 0;
+
+            int snakeX = 0;
+            int snakeY = 0;
+
+            int snakeLength = 2;
+
+            var random = new Random();
+
+            var width = WidthSetter();
+            var height = HeightSetter();
+
+            Console.Clear();
+
+            SetStartParameters(random, width, height, snakeX, snakeY, appleX, appleY, snake);
+
+            FieldDrawing(width, height);
+
+            GameLoop(random, width, height, snakeX, snakeY, appleX, appleY, snakeLength, snake);
+        }
+
+        private int WidthSetter()
+        {
+            Console.Write("Введите длину поля: ");
+
             try
             {
-                width = int.Parse(Console.ReadLine());
+                return int.Parse(Console.ReadLine());
             }
             catch (FormatException)
             {
                 Console.WriteLine("Неверное значение длины - ", Console.ReadLine());
             }
+
+            return 0;
         }
 
-        public void HeightChecker()
+        private int HeightSetter()
         {
+            Console.Write("Введите высоту поля: ");
+
             try
             {
-                height = int.Parse(Console.ReadLine());
+                return int.Parse(Console.ReadLine());
             }
             catch (FormatException)
             {
                 Console.WriteLine("Неверное значение высоты - ", Console.ReadLine());
             }
+
+            return 0;
         }
-        public void StartGame()
+        private void SetStartParameters(Random random, int width, int height, int snakeX, int snakeY, int appleX, int appleY, int[,] snake)
         {
-            snakeX[0] = random.Next(1, width - 1);
-            snakeY[0] = random.Next(1, height - 1);
+            snakeX = random.Next(1, width - 1);
+            snakeY = random.Next(1, height - 1);
+
+            snake[0, 0] = snakeX;
+            snake[0, 1] = snakeY;
+
             Console.CursorVisible = false;
+
             appleX = random.Next(1, width - 1);
             appleY = random.Next(1, height - 1);
         }
 
-        public void FieldDrawing()
+        private void GameLoop(Random random, int width, int height, int snakeX, int snakeY, int appleX, int appleY, int snakeLength, int[,] snake)
+        {
+            while (true)
+            {
+                var vector = UserInput();
+
+                vector.X = snakeX;
+                vector.Y = snakeY;
+
+                Walk(snakeX, snakeY);
+                AppleEating(random, width, height, snakeX, snakeY, appleX, appleY, snakeLength, snake);
+                WallLogicY(height, snakeX, snakeY, snakeLength);
+                WallLogicX(width, snakeX, snakeY, snakeLength);
+                Death(snakeX, snakeY, snakeLength);
+                System.Threading.Thread.Sleep(1000);
+            }
+        }
+
+        private MyVector2 UserInput()
+        {
+            switch (Console.ReadKey().Key)
+            {
+                case ConsoleKey.UpArrow:
+                case ConsoleKey.W:
+                    return new MyVector2(0, 1);
+                case ConsoleKey.DownArrow:
+                case ConsoleKey.S:
+                    return new MyVector2(0, -1);
+                case ConsoleKey.RightArrow:
+                case ConsoleKey.D:
+                    return new MyVector2(1, 0);
+                case ConsoleKey.LeftArrow:
+                case ConsoleKey.A:
+                    return new MyVector2(-1, 0);
+            }
+
+            return new MyVector2();
+        }
+
+        private void Walk(int snakeX, int snakeY)
+        {
+            WritePointSnake(snakeX, snakeY);
+        }
+
+        private void AppleEating(Random random, int width, int height, int snakeX, int snakeY, int appleX, int appleY, int snakeLength, int[,] snake)
+        {
+            if (snakeY == appleY && snakeX == appleX)
+            {
+                snakeLength++;
+                appleX = random.Next(2, (height - 1));
+                appleY = random.Next(2, (width - 1));
+                for (int i = snakeLength; i >= 0; i--)
+                {
+                    if (appleX == snakeX && appleY == snakeY)
+                    {
+                        appleX = random.Next(2, (height - 1));
+                        appleY = random.Next(2, (width - 1));
+                    }
+                }
+                SnakeGrowth(snakeLength, snake, snakeX, snakeY);
+
+                Drawing(snakeX, snakeY, appleX, appleY, snakeLength);
+            }
+        }
+
+        private void SnakeGrowth(int snakeLength, int[,] snake, int snakeX, int snakeY)
+        {
+            for (int i = snakeLength; i > 1; i--)
+            {
+                snakeX[i - 1] = snakeX[i - 2];
+                snakeY[i - 1] = snakeY[i - 2];
+            }
+        }
+
+        private void FieldDrawing(int width, int height)
         {
             for (int y = 0; y < height; y++)
             {
@@ -74,188 +195,86 @@ namespace SnakeGame
             }
         }
 
-        public void WritePointSnake(int x, int y)
+        private void WritePointSnake(int x, int y)
         {
             Console.SetCursorPosition(x, y);
             Console.Write("#");
         }
 
-        public void WritePointApple(int x, int y)
+        private void WritePointApple(int x, int y)
         {
             Console.SetCursorPosition(x, y);
             Console.Write("@");
         }
 
-        public void Drawing() 
+        private void Drawing(int snakeX, int snakeY, int appleX, int appleY, int snakeLength)
         {
             for (int i = 0; i < snakeLength; i++)
             {
-                WritePointSnake(snakeX[i], snakeY[i]);
+                WritePointSnake(snakeX, snakeY);
                 WritePointApple(appleX, appleY);
             }
         }
 
-        public void WallLogicX()
+        private void WallLogicX(int width, int snakeX, int snakeY, int snakeLength)
         {
-            if (snakeX[0] == 0)
-            {
-                snakeX[0] = width - 1;
-                snakeX[0]--;
-                for (int i = snakeLength; i > 1; i--)
-                {
-                    snakeX[i - 1] = snakeX[i - 2];
-                    snakeY[i - 1] = snakeY[i - 2];
-                }
-                Drawing();
-            }
-            if (snakeX[0] == width - 1)
-            {
-                snakeX[0] = 0;
-                snakeX[0]++;
-                for (int i = snakeLength; i > 1; i--)
-                {
-                    snakeX[i - 1] = snakeX[i - 2];
-                    snakeY[i - 1] = snakeY[i - 2];
-                }
-                Drawing();
-            }
-        }
-
-        public void WallLogicY()
-        {
-            if (snakeY[0] == 0)
-            {
-                snakeY[0] = height - 1;
-                snakeY[0]--;
-                for (int i = snakeLength; i > 1; i--)
-                {
-                    snakeX[i - 1] = snakeX[i - 2];
-                    snakeY[i - 1] = snakeY[i - 2];
-                }
-                Drawing();
-            }
-            if (snakeY[0] == height - 1)
-            {
-                snakeY[0] = 0;
-                snakeY[0]++;
-                for (int i = snakeLength; i > 1; i--)
-                {
-                    snakeX[i - 1] = snakeX[i - 2];
-                    snakeY[i - 1] = snakeY[i - 2];
-                }
-                Drawing();
-            }
-        }
-
-        public void Death()
-        {
-            for (int i = snakeLength; i > 0; i--)
-                {
-                if (snakeX[0] == snakeX[i] && snakeY[0] == snakeY[i])
-                {
-                    Console.WriteLine("Вы проиграли! Нажмите Enter, чтобы выйти:");
-                    Console.ReadLine();
-                    Environment.Exit(0);
-                }
-            }
-        }
-
-        public void WalkingLogic()
-        {
-            switch (Console.ReadKey().Key)
-            {
-                case ConsoleKey.UpArrow:
-                case ConsoleKey.W:
-                    snakeY[0]--;
-                    Console.Clear();
-                    WallLogicY();
-                    Death();
-                    FieldDrawing();
-                    Drawing();
-                    System.Threading.Thread.Sleep(1000);
-                    if (Console.ReadKey().Key == ConsoleKey.W || Console.ReadKey().Key == ConsoleKey.UpArrow)
-                    {
-                        return;
-                    }
-                    break;
-                case ConsoleKey.DownArrow:
-                case ConsoleKey.S:
-                    while (Console.ReadKey().Key == ConsoleKey.S || Console.ReadKey().Key == ConsoleKey.DownArrow)
-                    {
-                        snakeY[0]++;
-                        Console.Clear();
-                        WallLogicY();
-                        Death();
-                        FieldDrawing();
-                        Drawing();
-                        System.Threading.Thread.Sleep(1000);
-                    }
-                    break;
-                case ConsoleKey.RightArrow:
-                case ConsoleKey.D:
-                    while (true)
-                    {
-                        snakeX[0]++;
-                        Console.Clear();
-                        WallLogicX();
-                        Death();
-                        FieldDrawing();
-                        Drawing();
-                        System.Threading.Thread.Sleep(1000);
-                    }
-                case ConsoleKey.LeftArrow:
-                case ConsoleKey.A:
-                    while (true)
-                    {
-                        snakeX[0]--;
-                        Console.Clear();
-                        WallLogicX();
-                        Death();
-                        FieldDrawing();
-                        Drawing();
-                        System.Threading.Thread.Sleep(1000);
-                    }
-            }
-            if (snakeY[0] == appleY && snakeX[0] == appleX)
-            {
-                snakeLength++;
-                    appleX = random.Next(2, (height - 1));
-                    appleY = random.Next(2, (width - 1));
-                    for (int i = snakeLength; i >= 0; i--)
-                    {
-                        if (appleX == snakeX[i] && appleY == snakeY[i])
-                        {
-                            appleX = random.Next(2, (height - 1));
-                            appleY = random.Next(2, (width - 1));
-                        }
-                    }
-                Drawing();
-            }
-            for (int i = snakeLength; i > 1; i--)
-            {
-                snakeX[i - 1] = snakeX[i - 2];
-                snakeY[i - 1] = snakeY[i - 2];
-            }
-            Drawing();
-        }
-
-        static void Main(string[] args)
-        {
-            var Snake = new SnakeGame();
-
-            Console.Write("Введите длину поля: ");
-            Snake.WidthChecker();
-
-            Console.Write("Введите высоту поля: ");
-            Snake.HeightChecker();
-
-            Console.Clear();
-
-            Snake.StartGame();
-
-            Snake.FieldDrawing();
-
-            Snake.WalkingLogic();
+        if (snakeX == 0)
+             {
+                 snakeX = width - 1;
+                 snakeX--;
+                 for (int i = snakeLength; i > 1; i--)
+                 {
+                     snakeX[i - 1] = snakeX[i - 2];
+                     snakeY[i - 1] = snakeY[i - 2];
+                 }
+             }
+             if (snakeX == width - 1)
+             {
+                 snakeX = 1;
+                snakeX++;
+                 for (int i = snakeLength; i > 1; i--)
+                 {
+                     snakeX[i - 1] = snakeX[i - 2];
+                     snakeY[i - 1] = snakeY[i - 2];
+                 }
         }
     }
+
+    private void WallLogicY(int height, int snakeX, int snakeY, int snakeLength)
+     {
+         if (snakeY == 0)
+         {
+             snakeY = height - 1;
+                snakeY--;
+             for (int i = snakeLength; i > 1; i--)
+             {
+                 snakeX[i - 1] = snakeX[i - 2];
+                 snakeY[i - 1] = snakeY[i - 2];
+             }
+         }
+         if (snakeY == height - 1)
+         {
+             snakeY = 1;
+                snakeY++;
+             for (int i = snakeLength; i > 1; i--)
+             {
+                 snakeX[i - 1] = snakeX[i - 2];
+                 snakeY[i - 1] = snakeY[i - 2];
+             }
+         }
+     }
+
+    private void Death(int snakeX, int snakeY, int snakeLength)
+    {
+        for (int i = snakeLength; i > 0; i--)
+        {
+            if (snakeX == snakeX[i] && snakeY[0] == snakeY[i])
+            {
+                Console.WriteLine("Вы проиграли! Нажмите Enter, чтобы выйти:");
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
+        }
+    }
+  }
 }
